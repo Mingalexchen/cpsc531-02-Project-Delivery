@@ -25,22 +25,24 @@ depends on which one you want to run.
 
 Note:  
 --- make sure provided sample data are in the same folder as python files,
-or program will fail to find them.
---- Only tested on ubuntu 20.04. No guarantee that it will run on other OS.
+or program will fail to find them.  
+--- Only tested on ubuntu 20.04. No guarantee that it will run on other OS.  
 --- Program will fail if you do not remove existing output files.  
 
 ## Sample Outputs
 Sample outputs are provided for compare_result.py and compare_result_all.py  
-
-StepX_result are output files for compare_result.py   
+ 
+--- 
+### stepX_result are output files for compare_result.py   
 X represents the step indicated in compare_result.py.
   
 This part contains very little data, and only for the purpose of explaining how the program works.  
 Only one row is valid and output to the step3 sample output.
   
-  
-difference_* are output files for compare_result_all.py  
+--- 
+### difference_* are output files for compare_result_all.py  
 The value after _ represents the time difference bewteen observation and prediction  
+  
 EX: difference_30 contains difference between    
     prediction of level that is calculated with data from 30mins before the time indicated by the key   
     and   
