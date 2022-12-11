@@ -10,14 +10,17 @@ testing = True
 lines=sc.textFile('flowData1.txt',1)                # Read text as RDD
 representing_station = "3"                          # change value here for different station
 # filter out unneeded stations
+# because there is only one representing station, all stations not having the stationID equal 
+# to the represtation_station will be removed
 representing_station_rdd = lines.filter(lambda x: x[0] == representing_station)
 # convert to <time,level> kv pair
 obs_time_lvl_pair_rdd = representing_station_rdd.map(
                         lambda x: [re.split('\s+', x)[1],re.split('\s+', x)[3]])
 
+# result demo block
 if testing == True:
-    print (obs_time_lvl_pair_rdd)                              # print result for testing
-    obs_time_lvl_pair_rdd.saveAsTextFile("step1_result")
+    print (obs_time_lvl_pair_rdd)                              # print info for 1st step
+    obs_time_lvl_pair_rdd.saveAsTextFile("step1_result")       # save result to file
 
 # step 1 ends ---------------------------------------------------------------------------------
 
@@ -43,18 +46,26 @@ forecast_time_lvl_pair_rdd = lines.map(
                         lambda x: [utilities.dateTimeAddition(re.split('\s+', x)[1],time_selected),
                         re.split('\s+', x)[forecast_index]+"p"])
 
+# result demo block
 if testing == True:
-    forecast_time_lvl_pair_rdd.saveAsTextFile("step2_result")
+    forecast_time_lvl_pair_rdd.saveAsTextFile("step2_result")   # save result to file
 # step 2 ends ---------------------------------------------------------------------------------
 
 
 
 # step 3: compute the difference between two ------------------------------------------------
+# string format: obs level/predict level/precentage difference
+#   predicted level is indicated by a p
+#   precentage difference is calculated using helper function errorCalculation, which 
+#   computes (x-y)/x and returns --- when x = 0 
 difference_rdd = obs_time_lvl_pair_rdd.union(forecast_time_lvl_pair_rdd).reduceByKey(
                                             lambda x,y: x +"/" + y + "/" + 
                                             utilities.errorCalculation(x,y))
                                         
-# filter result to eliminate unrelated time
-filtered_difference_rdd = difference_rdd.filter(lambda x: x[1][-1:]=="%" or x[1][-1:]== "-")
-filtered_difference_rdd.saveAsTextFile("step3_result")
+# filter meaningless results and sort it by key. 
+# Meaningless results are time periods that exist in prediction time but not in observed time and vise versa. 
+# EX: obs time period is now to 1 day later, predict time period is 5 mins later to 1 day later + 5 mins
+#     we will not have value for obs at 1day+5min and also not have value for predicted time at now.
+filtered_difference_rdd = difference_rdd.filter(lambda x: x[1][-1:]=="%" or x[1][-1:]== "-").sortByKey(True)
+filtered_difference_rdd.saveAsTextFile("step3_result")  # save result to file
 # step 3 ends ---------------------------------------------------------------------------------

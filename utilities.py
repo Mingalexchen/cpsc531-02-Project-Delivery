@@ -20,11 +20,11 @@ def dateTimeAddition(time1,add_time):
     date_time = datetime.datetime(year_int,month_int,
                                 day_int,hour_int,
                                 min_int,sec_int)
-    # add time to converted time, and return
-    time_selected = add_time
-    min_change = datetime.timedelta(minutes=time_selected)
-    date_time = date_time + min_change
-    date_time_str = dateTimeToString(date_time)
+    
+    time_selected = add_time  
+    min_change = datetime.timedelta(minutes=time_selected) 
+    date_time = date_time + min_change  # add time to converted time
+    date_time_str = dateTimeToString(date_time)  # after getting the new time, convert it back and return
     return date_time_str
 
 # convert date time formate to string
@@ -34,18 +34,19 @@ def dateTimeToString(time1):
 
 # calculate the precentage difference between observed level and predicted level
 def errorCalculation(obs_lvl, p_lvl):
+    # check which val should be the base
     if obs_lvl[-1:] == "p":
         print(p_lvl+"\n")
         print(obs_lvl+"\n")
         temp = obs_lvl
         obs_lvl = p_lvl
         p_lvl = temp
+    # convert them to float
     obs_lvl_fl = float(obs_lvl)
-
     p_lvl_fl = float(p_lvl[:-1])
-    if obs_lvl_fl == 0 or obs_lvl == None or p_lvl == None:
+    if obs_lvl_fl == 0 or obs_lvl == None or p_lvl == None:  # if base is 0, return ---
         return "---"
-    difference = (obs_lvl_fl - p_lvl_fl)/obs_lvl_fl
-    diff_int = int(difference * 100000)
+    difference = (obs_lvl_fl - p_lvl_fl)/obs_lvl_fl  # compute difference 
+    diff_int = int(difference * 100000)  # adjust format to return only 3 decimal places
     difference = diff_int/1000
     return str(difference)+"%"
